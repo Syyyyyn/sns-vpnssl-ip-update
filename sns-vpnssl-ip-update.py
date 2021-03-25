@@ -4,10 +4,10 @@ from datetime import datetime
 from paramiko import SSHClient, AutoAddPolicy
 from scp import SCPClient
 
-parent_dir = os.path.dirname(os.path.realpath(__file__)
+parent_dir = os.path.dirname(os.path.realpath(__file__))
 
 def log(message, error):
-    open('{path}/sns-vpnssl-ip-update.log'.format(path=parent_dir)), 'a').write(message + '\n')
+    open('{path}/sns-vpnssl-ip-update.log'.format(path=parent_dir), 'a').write(message + '\n')
     if error == 0: print(message)
     else: sys.exit(message)
 
@@ -23,23 +23,23 @@ class Firewall:
         # Vérifie le format du nom d'hôte (FQDN ou adresse IP)
         regex_hostname = '^(\w*\.)*\w*[^\.]$'
         regex_ip_address = '^((\d){1,3}\.){3}(\d){1,3}$'
-        if re.match(regex_hostname, hostname): self.hostname = creds['hostname']
-        elif re.match(regex_ip_address, hostname):
-            for byte in hostname.split('.'):
+        if re.match(regex_hostname, credentials.hostname): self.hostname = credentials.hostname
+        elif re.match(regex_ip_address, credentials.hostname):
+            for byte in credentials.hostname.split('.'):
                 if int(byte) < 0 or int(byte) > 255:
-                    log('[-] ERROR: Invalid IP address ({ip_address})'.format(ip_address=creds['hostname']), 1)
+                    log('[-] ERROR: Invalid IP address ({ip_address})'.format(ip_address=credentials.hostname), 1)
             self.hostname = credentials.hostname
         else: log('[-] ERROR: Invalid hostname (must be IP or FQDN)', 1)
     
         # Vérifie le format du port (compris dans la plage 0-65535)
-        try: int(port)
+        try: int(credentials.port)
         except: log('[-] ERROR: Invalid port (must be in range 0-65535)', 1)
-        if int(port) > 0 or int(port) < 65535: self.port = credentials.port
+        if int(credentials.port) > 0 and int(credentials.port) < 65535: self.port = credentials.port
         else: log('[-] ERROR: Invalid port (must be in range 0-65535)', 1)
 
         # Vérifie le format des identifiants
-        if '' in (username, password):
-            log('[-] ERROR: No credentials were provided to connect to {hostname}'.format(hostname=hostname), 1)
+        if '' in (credentials.username, credentials.password):
+            log('[-] ERROR: No credentials were provided to connect to {hostname}'.format(hostname=self.hostname), 1)
         else:
             self.username = credentials.username
             self.password = credentials.password
