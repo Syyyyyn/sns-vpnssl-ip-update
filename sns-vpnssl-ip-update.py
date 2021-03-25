@@ -1,5 +1,5 @@
 import os, sys, re
-import credentials
+import settings
 from datetime import datetime
 from paramiko import SSHClient, AutoAddPolicy
 from scp import SCPClient
@@ -24,26 +24,26 @@ class Firewall:
         # Vérifie le format du nom d'hôte (FQDN ou adresse IP)
         regex_hostname = '^(\w*\.)*\w*[^\.]$'
         regex_ip_address = '^((\d){1,3}\.){3}(\d){1,3}$'
-        if re.match(regex_hostname, credentials.hostname): self.hostname = credentials.hostname
-        elif re.match(regex_ip_address, credentials.hostname):
-            for byte in credentials.hostname.split('.'):
+        if re.match(regex_hostname, settings.hostname): self.hostname = settings.hostname
+        elif re.match(regex_ip_address, settings.hostname):
+            for byte in settings.hostname.split('.'):
                 if int(byte) < 0 or int(byte) > 255:
-                    log('[-] ERROR: Invalid IP address ({ip_address})'.format(ip_address=credentials.hostname), 1)
-            self.hostname = credentials.hostname
+                    log('[-] ERROR: Invalid IP address ({ip_address})'.format(ip_address=settings.hostname), 1)
+            self.hostname = settings.hostname
         else: log('[-] ERROR: Invalid hostname (must be IP or FQDN)', 1)
     
         # Vérifie le format du port (compris dans la plage 0-65535)
-        try: int(credentials.port)
+        try: int(settings.port)
         except: log('[-] ERROR: Invalid port (must be in range 0-65535)', 1)
-        if int(credentials.port) > 0 and int(credentials.port) < 65535: self.port = credentials.port
+        if int(settings.port) > 0 and int(settings.port) < 65535: self.port = settings.port
         else: log('[-] ERROR: Invalid port (must be in range 0-65535)', 1)
 
         # Vérifie le format des identifiants
-        if '' in (credentials.username, credentials.password):
+        if '' in (settings.username, settings.password):
             log('[-] ERROR: No credentials were provided to connect to {hostname}'.format(hostname=self.hostname), 1)
         else:
-            self.username = credentials.username
-            self.password = credentials.password
+            self.username = settings.username
+            self.password = settings.password
     
     def execute(self, command):
         ssh = SSHClient()
@@ -96,6 +96,8 @@ class Firewall:
         log('[+] Restarting OpenVPN service on {hostname}'.format(hostname=hostname), 0)
         try: self.execute('enopenvpn')
         except: log('[-] ERROR: Unable to restart OpenVPN', 1)
+
+#TODO: Générer le fichier settings.py
 
 # Horodatage de l'opération
 timestamp = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
