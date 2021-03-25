@@ -7,7 +7,8 @@ from scp import SCPClient
 parent_dir = os.path.dirname(os.path.realpath(__file__))
 
 def log(message, error):
-    open('{path}/sns-vpnssl-ip-update.log'.format(path=parent_dir), 'a').write(message + '\n')
+    filename = datetime.now().strftime('%d-%m-%Y')
+    open('{path}/logs/{name}.log'.format(path=parent_dir, name=filename), 'a').write(message + '\n')
     if error == 0: print(message)
     else: sys.exit(message)
 
