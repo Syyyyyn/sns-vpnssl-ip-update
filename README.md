@@ -16,18 +16,10 @@ This application requires Python3 and Paramiko in order to be executed.
 $ apt install python3 python3-pip
 ```
 
-- Paramiko module, for automated SSH connections
+- Paramiko & SCP modules, for automated SSH connections
 
 ```
-$ pip3 install paramiko
-```
-
-**Dependencies**
-
-This application uses `sshpass` to download & upload configuration to the appliance.
-
-```
-$ apt install sshpass
+$ pip3 install paramiko scp
 ```
 
 ### Installation
